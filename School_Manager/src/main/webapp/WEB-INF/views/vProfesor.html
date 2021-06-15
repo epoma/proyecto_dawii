@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profesor</title>
+  
+   	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+   	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap4.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+	<link rel="stylesheet" th:href="@{/resources/datepicker/bootstrap-datepicker.css}">
+	<link rel="stylesheet" th:href="@{/resources/alertifyjs/css/alertify.css}">
+	<link rel="stylesheet" th:href="@{/resources/alertifyjs/css/alertify.min.css}">
+   	<link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css"/>
+ 	<link rel="stylesheet" th:href="@{/resources/css/index.css}">
+ 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script th:src="@{/resources/js/accordion.js}"></script>
+
+
+<style type="text/css">
+	.sidebar{
+    width: 345px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: var(--main-color);
+    z-index: 100; /*sin efecto - elemento no posicionado*/
+    transition: width 300ms;   
+	}
+	
+	.modal-header, h4, .close {
+		background-color: #65ACAA;
+		color: white !important;
+		text-align: center;
+		font-size: 20px;
+	}
+	.help-block{
+	 color: red;
+	 /*display: none;*/
+	}
+	.form-group.has-error .form-control-label {
+	  color: red;
+	}
+	.form-group.has-error .form-control {
+	  border: 1px solid red;
+	  box-shadow: 0 0 0 0.2rem rgba(250, 16, 0, 0.18);
+	}
+	
+	.alertify .ajs-dialog {
+	    top: 50%;
+	    transform: translateY(-50%);
+	    margin: auto;
+	}
+	
+	.ajs-header{
+		background-color: #65ACAA !important;
+		color: white !important;
+		/*text-align: center;*/
+		font-size: 18px;
+		font-weight: bold;
+	}
+	.ajs-ok{
+		color: #fff;
+	    background-color: #65ACAA;
+	    border-color: #65ACAA;
+	}
+	.ajs-cancel{
+		color: #fff;
+	    background-color: #dc3545;
+	    border-color: #dc3545;
+	}
+	.btn-primary{
+	background-color: #65ACAA !important;
+	}
+	.dataTables_length, .dataTables_info{
+		display: none;
+	}
+	.modal-lg, .modal-xl {
+		max-width: 900px;
+		max-height: 800px;
+	}
+	
+	.form-control-feedback2 {
+	  margin:1px;
+	  position: absolute;
+	  padding: 10px;
+	  pointer-events: none;
+	  background-color: #e9ecef;
+	  border-style: none;
+	}
+	.form-control-feedback3 {
+	  margin:1px;
+	  position: absolute;
+	  margin-left:225px;
+	  padding: 10px;
+	  pointer-events: none;
+	  background-color: #e9ecef;
+	  border-style: none;
+	}
+	.form-control {
+	  padding-left: 40px!important;
+	}
+	/*.toast-succes{
+		width: 120px;
+	}*/
+
+</style>
+
+</head>
+<body>
+
+<input type="checkbox"  id="nav-toggle">
+   
+    <div class="sidebar" >
+        <div class="sidebar-brand">
+            <h2>
+            <span class="las la-school"></span>
+            <span>School Manager</span>
+        </h2>
+        </div>
+        <div class="sidebar-menu">
+            <ul id="accordion" class="accordion">
+                <li>
+                    <a class="link" th:href="@{/principal/}">
+                        <span class="left las la-home"></span>
+                        <span>Inicio</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="link" href="#">
+                        <span class="left las la-users"></span>
+                        <span>Asistencia</span>
+                        <span class="right las la-chevron-down"></span>
+
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#">Registro Asistencia</a></li>
+                        <li><a href="#">Autenticaci&oacuten</a></li>
+                        <li><a href="#">Geolocalizaci&oacuten</a></li>
+                    </ul>
+                </li>
+               
+                <li>
+                    <a class="link">
+                        <span class="left las la-users"></span>
+                        <span>Usuario</span>
+                        <span class="right las la-chevron-down"></span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a th:href="@{/alumno/}">Alumnos</a></li>
+                        <li><a th:href="@{/profesor/}">Docentes</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="link">
+                        <span class="left las la-user"></span>
+                        <span>Administraci&oacuten</span>
+                        <span class="right las la-chevron-down">
+                        </span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="#">Carrera</a></li>
+                       <li><a th:href="@{/seccion/}">Seccion</a></li>
+                         <li><a th:href="@{/detalle/}">Notas</a></li>
+                        <li><a href="#">Horario</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="link">
+                        <span class="left las la-clipboard"></span>
+                        <span>Consultas</span>
+                        <span class="right las la-chevron-down"></span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a th:href="@{/alumno/filtro}">Alumnos por Carrera</a></li>
+                        <li><a th:href="@{/seccion/filtro}">Secciones por Profesor</a></li>
+    
+                    </ul>
+                </li>
+                <li>
+                     <a class="link" th:href="@{/ayuda/}">
+                        <span class="left las la-info-circle"></span>
+                        <span>Ayuda</span>
+                     </a>
+                </li>
+            </ul>
+        </div>
+    </div> 
+
+     <div class="main-content">
+        <header>
+            <div class="header-title">
+                <h2>
+                    <label for="nav-toggle"><span class="las la-bars"></span></label>Dashboard
+                </h2>
+            </div>
+            <div class="user-wrapper">
+                <img src="../img/img1.jpg" width="40px" height="40px" />
+                <div>
+                    <h4>Anybody</h4><small>Super Admin</small>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <!--EDIT APART FROM THIS-->
+            <div class="recent">
+                <div class="project">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Listado de Profesores</h3>
+                            <button type="button" class="btn btn-primary mt-5" data-toggle="modal" data-target="#modalProfesor" id="btn-nuevo">
+			 					<i class="far fa-file"></i>>Nuevo Profesor<span class="las la-arrow-right"></span>
+			 				</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table width="100%" id="tableDocentes">
+                                    <thead>
+                                        <tr>
+							                <th>NOMBRE</th>
+							                <th>APELLIDO</th>
+							                <th>USUARIO</th>
+							                <th>EDAD</th>
+							                <th>CELULAR</th>
+							                <th>DIRECCION</th>
+							                <th>ROL</th>
+							                <th>ESTADO</th>
+							                <th></th>
+							                <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        	  <tr th:each="bean:${profesores}">
+										      <td th:text="${bean.nombreProfesor}"></td>
+										      <td th:text="${bean.apellidoProfesor}"></td>
+										      <td th:text="${bean.usuarioProfesor}"></td>
+										      <td th:text="${bean.edadProfesor}"></td>
+										      <td th:text="${bean.celularProfesor}"></td>
+										      <td th:text="${bean.direccionProfesor}"></td>
+										      <td th:text="${bean.rol.descripcionRol}"></td>
+										      <td th:text="${bean.estadoRegistro}"></td>
+										   
+										      <td><a  th:href="@{buscarProfesor/(code=${bean.codigoProfesor})}" id="btn-Editar" class="btn btn-info btn-editar" data-toggle="modal" data-target="#modalProfesor"><i class="far fa-edit"></i></a></td>
+							      			  <td><a  th:href="@{eliminar/(codigo=${bean.codigoProfesor})}"  id="btn-Eliminar" class="btn btn-danger btn-eliminar"><i class="far fa-trash-alt"></i></a></td>
+							      
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- begin #modal-dialog : MODAL DOCENTE-->
+							<div class="modal fade" id="modalProfesor" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+										<div class="modal-dialog modal-dialog-centered modal-login modal-lg" >					
+											<div class="modal-content">
+												<div class="modal-header bg-blue-darker">
+													<h4 class="modal-title text-white">Docente</h4>
+												</div>
+													
+												<div class="modal-body">
+												 <form method="POST" id="idRegistra" th:action="@{/profesor/guardarProfesor}">	
+													<input type="hidden" id="idCodigo" value="0" name="codigo">
+													
+													<div class="container">
+														<div class="row">
+															
+															<div class="form-group has-feedback col-md-6">
+																	<label for="exampleInputEmail1"><b>Nombres</b></label><br>		
+																	<i class="fas fa-file-signature form-control-feedback2"></i>	
+																	<input type="text" class="form-control" name="nombres" id="idNombre" placeholder="Ingresar nombre">																										
+															</div>
+															
+															<div class="form-group has-feedback col-md-6">
+																<label for="exampleInputEmail1"><b>Apellidos</b></label><br>	
+																<i class="fas fa-pen-fancy form-control-feedback2"></i>
+																<input type="text" class="form-control" name="apellidos" id="idApellido" placeholder="Ingresar apellido">	
+															</div>
+															
+															<div class="form-group has-feedback col-md-6">
+																<label for="exampleInputEmail1"><b>Usuario</b></label><br>
+																<i class="fas fa-money-check-alt form-control-feedback2"></i>
+																<input type="text" class="form-control"  name="usuario" id="idUsername" placeholder="Ingresar su usuario">														
+															</div>
+															
+															<div class="form-group has-feedback col-md-6">
+																<label for="exampleInputEmail1"><b>Contraseña</b></label><br>
+																<i class="fas fa-money-check-alt form-control-feedback2"></i>
+																<input type="password" class="form-control"  name="password" id="idPassword" placeholder="Ingresar una clave">														
+															</div>
+							
+														    <div class="form-group has-feedback col-md-6">
+																<label for="exampleInputEmail1"><b>Edad</b></label><br>
+																<i class="fas fa-money-check-alt form-control-feedback2"></i>
+																<input type="text" class="form-control"  name="edad" id="idEdad" placeholder="Ingresar edad">														
+															</div>
+															
+															<div class="form-group has-feedback col-md-6">
+																<label for="exampleInputEmail1"><b>Celular</b></label><br>
+																<i class="fas fa-money-check-alt form-control-feedback2"></i>
+																<input type="text" class="form-control"  name="celular" id="idCelular" placeholder="Ingresar número de celular">														
+															</div>
+															
+															<div class="form-group has-feedback col-md-12">
+																<label for="exampleInputEmail1"><b>Dirección</b></label><br>
+																<i class="fas fa-money-check-alt form-control-feedback2"></i>
+																<input type="text" class="form-control"  name="direccion" id="idDireccion" placeholder="Ingresar dirección">														
+															</div>	
+																
+															<div class="form-group has-feedback col-md-6">	
+																	<label for="exampleInputEmail1"><b>Rol</b></label><br>
+															        <i class="fas fa-prescription-bottle-alt form-control-feedback2"></i>
+																    <select class="form-control" name="codigorol" id="idRol">
+																      <option value="0">[Seleccione Rol]</option>
+																      <option th:each="bean:${roles}"
+																      		  th:value="${bean.codigoRol}"
+																      		  th:utext="${bean.descripcionRol}">
+																      </option>
+																    </select>
+															 </div>
+															 
+															<div class="form-group has-feedback col-md-6">
+																	<label for="exampleInputEmail1"><b>Estado</b></label><br>
+																	<i class="fas fa-file-signature form-control-feedback2"></i>	
+																	<select class="form-control" id="idEstado" name="estado"    >
+																			  <option value=" ">[Seleccione Estado]</option>
+																			  <option value="ACTIVO">ACTIVO</option>
+																			  <option value="RETIRADO">RETIRADO</option>
+																			  <option value="SUSPENDIDO">SUSPENDIDO</option>
+																	</select>													
+															</div>
+																									 
+														</div>
+													</div>		
+																			
+													<div class="col-md-12 text-center mt-4"> 										
+														<button type="submit" id="Guardar" class="btn btn-primary"><i class="fas fa-save"></i> Registrar</button>
+														<button type="button" id="btnCerrar" class="btn btn-danger" data-dismiss="modal"><i class="fas fa-undo-alt"></i> Cancelar</button>
+													</div> 
+																																					
+												</form>
+											</div>
+				                		</div>
+									</div>
+								</div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+	
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+	<script src="https://cdn.bootcdn.net/ajax/libs/bootstrap-validator/0.5.3/js/bootstrapValidator.js"></script>
+
+	<script src="https://kit.fontawesome.com/08aaa156fb.js" crossorigin="anonymous"></script>
+	<script	src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+	<script th:src="@{/resources/alertifyjs/alertify.js}"></script>
+	<script th:src="@{/resources/alertifyjs/alertify.min.js}"></script>
+	
+	
+	<script th:inline="javascript" th:if="${MENSAJE!=null}">
+		//obtener atributo MENSAJE
+		var mensaje=/*[[${MENSAJE}]]*/ null;
+		
+		toastr.success(mensaje, toastr.options = {
+			"timeOut": "2000",
+			"positionClass " : " toast-top-right ",
+		});
+	
+	</script>
+	
+	<script>
+	
+		$(document).ready(function(){
+			$('#tableDocentes').DataTable();
+		})
+			
+		/* SCRIPT PARA ELIMINAR */
+		
+		$(document).on("click","#btn-Eliminar",function(){
+			
+			event.preventDefault();
+			var ruta=$(this).attr("href");
+			alertify.confirm("SISTEMA","Seguro que desea dar de baja al usuario!",
+			function(){
+				window.location = ruta;
+			},
+			function(){ 
+				alertify.error('Cancelado!')
+			}).
+				set('labels', {ok:'Si', cancel:'No'});
+		})
+
+		
+		/* SCRIPT PARA CERRAR */
+
+		$(document).on("click","#btnCerrar",function(){
+
+			$('#idRegistra').data("bootstrapValidator").resetForm(true);
+			$('#idRegistra').trigger("reset");
+			$("#idCodigo").val(0);
+		})
+
+		
+		/* SCRIPT PARA EDITAR/BUSCAR */	
+		$(document).on("click","#btn-Editar",function(){
+
+			var ruta=$(this).attr("href");
+
+			$.get(ruta,function(response){
+				console.log(response);
+				$("#idCodigo").val(response.codigoProfesor);
+				$("#idNombre").val(response.nombreProfesor);
+				$("#idApellido").val(response.apellidoProfesor);
+				$("#idUsername").val(response.usuarioProfesor);
+				$("#idPassword").val(response.passProfesor);
+				$("#idEdad").val(response.edadProfesor);
+				$("#idCelular").val(response.celularProfesor);
+				$("#idDireccion").val(response.direccionProfesor);
+				$("#idRol").val(response.rol.codigoRol);
+				$("#idEstado").val(response.estadoRegistro);
+			})
+		})
+
+		
+		/* SCRIPT PARA CERRAR */
+		$(document).on("click","#btnCerrar",function(){
+			//REINICIAR VALIDACION
+			$('#idRegistra').data("bootstrapValidator").resetForm(true);
+			//LIMPIAR CONTROLES
+			$('#idRegistra').trigger("reset");
+			$("#idCodigo").val(0);
+		})
+		
+		
+	</script>
+	<script type="text/javascript">    
+	    $(document).ready(function(){     
+	
+	        $('#idRegistra').bootstrapValidator({     
+	        	feedbackIcons: {
+	                valid: 'glyphicon glyphicon-ok',
+	                invalid: 'glyphicon glyphicon-remove',
+	                validating: 'glyphicon glyphicon-refresh'
+	            },
+	        	 fields:{
+	        		 
+	        		 Nombres: {
+	     	    		selector:'#idNombre',   
+	                    validators: {    
+	                        notEmpty: {    
+	                            message: 'Ingrese nombre'    
+	                        }      
+	                    }    
+	                },   
+	                Descripcion: {
+	     	    		selector:'#idDescripcion',       
+	                    validators: {    
+	                        notEmpty: {    
+	                            message: 'Ingrese descripción'    
+	                        }      
+	                    }    
+	                },    
+	                Stock: {
+	     	    		selector:'#idStock',      
+	                    validators: {    
+	                        notEmpty: {    
+	                            message: 'Ingrese stock'    
+	                        },
+	                        regexp: {    
+	                            regexp: /^[0-9]{1,2}$/,    
+	                            message: 'Campo stock hasta dos cifras'    
+	                        },   
+	                    }    
+	                },
+	                precio: {
+	     	    		selector:'#idPrecio',      
+	                    validators: {    
+	                        notEmpty: {    
+	                            message: 'Ingrese precio'    
+	                        },
+	                        regexp: {    
+	                            regexp: /^(\d+|[0-9]+\.\d{1,2})$/,    
+	                            message: 'Campo precio real hasta dos decimales'    
+	                        },   
+	                    }    
+	                },       				
+	                Fecha: {
+	     	    		selector:'#usr1',   
+	                    validators: {    
+	                        notEmpty: {    
+	                            message: 'Seleccione fecha '    
+	                        },
+	                        date: {
+	                            format: 'YYYY-MM-DD',
+	                            message: 'The format is dd/mm/yyyy'
+	                        },
+	                    }    
+	                },
+	                Tipo: {
+	     	    		selector:'#idTipo',   
+	                    validators: {    
+	                        notEmpty: {    
+	                            message: 'Seleccione tipo medicamento'    
+	                        },					
+	                    }    
+	                } 
+	        	 }
+	        });   				
+	    });    
+	</script>
+</body>
+</html>
